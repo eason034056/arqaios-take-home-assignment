@@ -1,0 +1,49 @@
+# Configuration file for mmWave Human Identification POC
+
+# Data paths
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  num_points: 200  # Fixed number of points per sample
+  num_channels: 3  # x, y, z coordinates
+  normalize_center: true  # Experiment setting
+  normalize_scale: false  # Keep absolute body size
+  samples_per_mesh: 100  # Following paper: 100 samples per mesh × 100 meshes = 10,000
+  
+# Data augmentation
+augmentation:
+  rotation_range: 30  # degrees around z-axis (moderate augmentation)
+  translation_range: 0.2  # meters in x,y plane (small perturbation)
+  normalize: true  # normalize to unit sphere
+
+# Dataset split
+split:
+  strategy: "stratified"  # Experiment setting
+  train_ratio: 0.7
+  val_ratio: 0.1
+  test_ratio: 0.2
+  seed: 1
+
+# Training hyperparameters
+training:
+  batch_size: 64  # Larger batch for stability with high LR
+  num_epochs: 120  # Maximum epochs (early stopping may terminate earlier)
+  learning_rate: 0.001  # Learning rate for Adam optimizer
+  weight_decay: 0.0001  # L2 regularization
+  early_stopping_patience: 20  # Stop if no improvement for 20 epochs
+  
+# Model selection: 'mlp', 'cnn1d', 'pointnet'
+model:
+  type: "pointnet"
+  num_classes: 10  # FAUST has 10 subjects
+  dropout: 0.2  # Reduced to allow model to learn better
+  cnn1d_kernel_size: 3  # Kernel size for CNN1D (3 for local patterns, 1 for pointwise)
+
+# Logging and checkpoints
+logging:
+  log_dir: "results"
+  save_best: true
+  save_interval: 10
+
+# Device configuration
+device: "mps"  # 'cuda', 'mps' (for Mac M1/M2), or 'cpu'
