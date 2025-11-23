@@ -104,7 +104,6 @@ That's it! The GUI will guide you through:
 - 💾 **One-Click Downloads** - Export models and reports
 - 🌐 **Web-Based** - No local Python environment needed
 
-For detailed GUI instructions, see **[GUI_GUIDE.md](GUI_GUIDE.md)**.
 
 ---
 
@@ -197,7 +196,6 @@ python src/evaluate.py \
     --models mlp cnn1d pointnet    # Models to compare
 ```
 
-For detailed command-line usage, see **[QUICKSTART.md](QUICKSTART.md)**.
 
 ---
 
