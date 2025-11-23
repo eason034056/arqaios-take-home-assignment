@@ -38,7 +38,6 @@ This platform trains deep learning models to **identify individuals** from spars
 
 - ✅ **Preserves privacy** - no facial features or detailed imagery
 - ✅ **Works in darkness** - independent of lighting conditions
-- ✅ **Sees through obstacles** - penetrates clothing and some materials
 - ✅ **Generates sparse data** - typically <200 points per frame
 
 ### Three Models Included
