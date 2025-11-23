@@ -35,7 +35,6 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from dataset import (
     load_faust_dataset,
-    stratified_split,
     stratified_split_grouped,
     create_dataloaders,
     save_processed_dataset,
@@ -438,16 +437,15 @@ def train(config: Dict, model_type: str, resume_from: Optional[str] = None) -> N
     print("Loading dataset...")
     print("=" * 80)
     
-    # Determine split strategy and corresponding filename
-    split_strategy = config['split'].get('strategy', 'stratified')
-    processed_filename = f'faust_pc_{split_strategy}.npz'  # Different file for each strategy
+    # Use grouped split
+    processed_filename = 'faust_pc.npz'
     processed_path = Path(config['data']['processed_dir']) / processed_filename
     
     samples_per_mesh = config['data'].get('samples_per_mesh', 100)
     normalize_center = config['data'].get('normalize_center', True)
     normalize_scale = config['data'].get('normalize_scale', True)
     
-    print(f"Split strategy: {split_strategy}")
+    print(f"Split strategy: grouped")
     print(f"Processed data will be saved/loaded from: {processed_path}")
     
     if processed_path.exists():
@@ -504,29 +502,16 @@ def train(config: Dict, model_type: str, resume_from: Optional[str] = None) -> N
             samples_per_mesh=samples_per_mesh
         )
     
-    # Split dataset based on strategy
-    if split_strategy == 'grouped':
-        # Grouped split: no data leakage, samples from same mesh stay together
-        # Tests true pose generalization ability
-        print("\nSplitting dataset (grouped by mesh, no data leakage)...")
-        X_train, y_train, X_val, y_val, X_test, y_test = stratified_split_grouped(
-            data, labels, filenames, samples_per_mesh,
-            train_ratio=config['split']['train_ratio'],
-            val_ratio=config['split']['val_ratio'],
-            test_ratio=config['split']['test_ratio'],
-            random_seed=config['split']['seed']
-        )
-    else:
-        # Stratified split: with data leakage, samples from same mesh may be in different splits
-        # Tests identity recognition with seen poses
-        print("\nSplitting dataset (stratified by identity, with data leakage)...")
-        X_train, y_train, X_val, y_val, X_test, y_test = stratified_split(
-            data, labels,
-            train_ratio=config['split']['train_ratio'],
-            val_ratio=config['split']['val_ratio'],
-            test_ratio=config['split']['test_ratio'],
-            random_seed=config['split']['seed']
-        )
+    # Split dataset using grouped split
+    # Samples from the same mesh stay together to avoid data leakage
+    print("\nSplitting dataset (grouped by mesh)...")
+    X_train, y_train, X_val, y_val, X_test, y_test = stratified_split_grouped(
+        data, labels, filenames, samples_per_mesh,
+        train_ratio=config['split']['train_ratio'],
+        val_ratio=config['split']['val_ratio'],
+        test_ratio=config['split']['test_ratio'],
+        random_seed=config['split']['seed']
+    )
     
     # Create DataLoaders
     print("\nCreating DataLoaders...")

@@ -41,7 +41,7 @@ from sklearn.metrics import (
 # Add src directory to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from dataset import load_processed_dataset, stratified_split, create_dataloaders
+from dataset import load_processed_dataset, stratified_split_grouped, create_dataloaders
 from models import MLPBaseline, CNN1DModel, TinyPointNet
 from train import load_config, create_model
 
@@ -417,11 +417,14 @@ def main():
     # Load test dataset
     print("\nLoading test dataset...")
     processed_path = Path(config['data']['processed_dir']) / 'faust_pc.npz'
-    data, labels, _, _ = load_processed_dataset(str(processed_path))
+    data, labels, filenames, metadata = load_processed_dataset(str(processed_path))
     
-    # Split dataset (same split as training)
-    _, _, _, _, X_test, y_test = stratified_split(
-        data, labels,
+    # Get samples_per_mesh from metadata or config
+    samples_per_mesh = metadata.get('samples_per_mesh', config['data'].get('samples_per_mesh', 100))
+    
+    # Split dataset (same split as training, grouped by mesh to avoid data leakage)
+    _, _, _, _, X_test, y_test = stratified_split_grouped(
+        data, labels, filenames, samples_per_mesh,
         train_ratio=config['split']['train_ratio'],
         val_ratio=config['split']['val_ratio'],
         test_ratio=config['split']['test_ratio'],

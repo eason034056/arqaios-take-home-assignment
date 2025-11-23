@@ -286,78 +286,6 @@ def load_faust_dataset(data_dir: str,
     return data, labels, all_filenames
 
 
-def stratified_split(data: np.ndarray,
-                    labels: np.ndarray,
-                    train_ratio: float = 0.7,
-                    val_ratio: float = 0.1,
-                    test_ratio: float = 0.2,
-                    random_seed: int = 42) -> Tuple[np.ndarray, ...]:
-    """
-    Split dataset into train/val/test with stratification.
-    
-    ⚠️ DEPRECATED: This function has data leakage issue when samples_per_mesh > 1
-    Use stratified_split_grouped() instead to avoid data leakage.
-    
-    Stratification ensures each split has balanced class distribution.
-    This is important when we have 10 subjects and want each split to
-    contain samples from all subjects.
-    
-    Args:
-        data: point cloud data, shape (N, num_points, 3)
-        labels: subject labels, shape (N,)
-        train_ratio: proportion for training (default 0.7)
-        val_ratio: proportion for validation (default 0.1)
-        test_ratio: proportion for testing (default 0.2)
-        random_seed: random seed for reproducibility
-        
-    Returns:
-        X_train, y_train: training data and labels
-        X_val, y_val: validation data and labels
-        X_test, y_test: test data and labels
-        
-    Example:
-        >>> data = np.random.rand(10000, 200, 3)
-        >>> labels = np.repeat(np.arange(10), 1000)  # 1000 samples per subject
-        >>> splits = stratified_split(data, labels)
-        >>> X_train, y_train, X_val, y_val, X_test, y_test = splits
-        >>> X_train.shape
-        (7000, 200, 3)  # 70% of 10000
-    """
-    assert abs(train_ratio + val_ratio + test_ratio - 1.0) < 1e-6, \
-        "Ratios must sum to 1.0"
-    
-    # First split: separate test set
-    X_temp, X_test, y_temp, y_test = train_test_split(
-        data, labels,
-        test_size=test_ratio,
-        stratify=labels,  # Maintain class distribution
-        random_state=random_seed
-    )
-    
-    # Second split: separate train and val from remaining data
-    # val_ratio_adjusted = val / (train + val)
-    val_ratio_adjusted = val_ratio / (train_ratio + val_ratio)
-    
-    X_train, X_val, y_train, y_val = train_test_split(
-        X_temp, y_temp,
-        test_size=val_ratio_adjusted,
-        stratify=y_temp,  # Maintain class distribution
-        random_state=random_seed
-    )
-    
-    print(f"Train set: {len(X_train)} samples")
-    print(f"Val set: {len(X_val)} samples")
-    print(f"Test set: {len(X_test)} samples")
-    
-    # Verify class distribution
-    print(f"\nClass distribution:")
-    print(f"Train: {np.bincount(y_train)}")
-    print(f"Val: {np.bincount(y_val)}")
-    print(f"Test: {np.bincount(y_test)}")
-    
-    return X_train, y_train, X_val, y_val, X_test, y_test
-
-
 def stratified_split_grouped(data: np.ndarray,
                              labels: np.ndarray,
                              filenames: List[str],
@@ -645,8 +573,10 @@ def load_processed_dataset(load_path: str) -> Tuple[np.ndarray, np.ndarray, Opti
 # 1. Load FAUST dataset:
 #    data, labels, files = load_faust_dataset("data/raw")
 #
-# 2. Split into train/val/test:
-#    X_train, y_train, X_val, y_val, X_test, y_test = stratified_split(data, labels)
+# 2. Split into train/val/test (grouped by mesh to avoid data leakage):
+#    X_train, y_train, X_val, y_val, X_test, y_test = stratified_split_grouped(
+#        data, labels, files, samples_per_mesh
+#    )
 #
 # 3. Create DataLoaders:
 #    train_loader, val_loader, test_loader = create_dataloaders(
