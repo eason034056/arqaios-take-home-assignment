@@ -47,7 +47,7 @@ This platform trains deep learning models to **identify individuals** from spars
 |-------|----------|---------------|----------|
 | **MLP Baseline** | ~20-40% | 10-20 min | Quick testing |
 | **1D-CNN** | ~65-70% | 30-60 min | Balanced performance |
-| **Tiny PointNet** ⭐ | ~70-85% | 60-120 min | Best accuracy |
+| **** ⭐ | ~70-85% | 60-120 min | Best accuracy |
 
 ### Use Cases
 
@@ -281,7 +281,7 @@ Input (200, 3) → Sort → Conv1D(64) → Conv1D(128) → Conv1D(256)
 
 ---
 
-### 3. Tiny PointNet ⭐ (Recommended)
+### 3.  ⭐ (Recommended)
 
 **Architecture:**
 ```
@@ -391,7 +391,7 @@ arqaios-take-home-assignment/
 │   └── models/                    # Model implementations
 │       ├── mlp.py                 # MLP Baseline
 │       ├── cnn1d.py               # 1D-CNN Model
-│       └── pointnet_tiny.py       # Tiny PointNet
+│       └── pointnet_tiny.py       # 
 │
 ├── data/                          # Data directory
 │   ├── raw/                       # Raw mesh files (.ply, .obj)
@@ -423,7 +423,7 @@ arqaios-take-home-assignment/
 |-------|--------------|----------|------------|---------------|
 | MLP Baseline | 35-40% | 0.33-0.38 | ~200K | 10-20 min |
 | 1D-CNN | 65-70% | 0.63-0.68 | ~300K | 30-60 min |
-| Tiny PointNet | 80-85% | 0.78-0.83 | ~1.5M | 60-120 min |
+| Tiny PointNet | 70-85% | 0.78-0.83 | ~1.5M | 60-120 min |
 
 ### What You'll Get
 
