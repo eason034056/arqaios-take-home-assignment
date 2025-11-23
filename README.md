@@ -47,7 +47,7 @@ This platform trains deep learning models to **identify individuals** from spars
 |-------|----------|---------------|----------|
 | **MLP Baseline** | ~20-40% | 10-20 min | Quick testing |
 | **1D-CNN** | ~65-70% | 30-60 min | Balanced performance |
-| **** ⭐ | ~70-85% | 60-120 min | Best accuracy |
+| **Tiny PointNet** ⭐ | ~70-85% | 60-120 min | Best accuracy |
 
 ### Use Cases
 
