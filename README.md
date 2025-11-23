@@ -521,11 +521,8 @@ After training, you'll find:
 1. **Check logs**: 
    - GUI: View training logs in the web interface
    - CLI: Check console output and TensorBoard
-2. **Review documentation**:
-   - [GUI_GUIDE.md](GUI_GUIDE.md) for GUI issues
-   - [QUICKSTART.md](QUICKSTART.md) for CLI issues
-3. **Examine code comments**: All functions have detailed docstrings
-4. **Check configuration**: Verify `config.yaml` settings
+2. **Examine code comments**: All functions have detailed docstrings
+3. **Check configuration**: Verify `config.yaml` settings
 
 ---
 
